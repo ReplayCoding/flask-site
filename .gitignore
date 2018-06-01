@@ -1,4 +1,10 @@
 upload/*
+scripts
+lib
+include
 Scripts
 Lib
 Include
+bin/
+lib64
+share/
