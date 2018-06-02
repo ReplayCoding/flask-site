@@ -33,14 +33,16 @@ def upload_file():
             filename = secure_filename(file.filename)
             if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], filename)):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
+                return render_template("index.html", results=glob("./upload/*"))
+            else:
+	            return redirect(url_for('uploaded_file',
                                     filename=filename))
     return render_template("index.html", results=glob("./upload/*"))
 @app.route("/uploaded_file")
 def uploaded_file():
     filename = request.args.get("filename")
     link = os.path.join(UPLOAD_FOLDER, filename)
-    return render_template("show.html",link=link)
+    return render_template("sure.html",link=link)
 @app.route("/delete")
 def delete():
     filetodel = request.args.get("file")
