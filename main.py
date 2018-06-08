@@ -51,4 +51,6 @@ def delete():
     return redirect("/")
 
 
+if not os.path.isdir("./upload/"):
+    os.mkdir("./upload/")
 app.run()
