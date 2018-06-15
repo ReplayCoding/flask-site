@@ -5,7 +5,7 @@
     <form method=post enctype=multipart/form-data>
       	 <input type=file name=file>
          <input type=submit value=Upload>
-         {% for result in results %}
-		 	<br><a href={{result}}>{{ result[9:] }}</a> | <a href=/delete?file={{result|urlencode}}>Delete</a>			
+         {% for result,file in results %}
+		 	<br><a href="/upload/?file={{file|urlencode}}">{{result}} </a> | <a href=/delete?file={{result|urlencode}}>Delete</a>			
          {% endfor %}
     </form>
