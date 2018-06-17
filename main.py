@@ -13,23 +13,21 @@ def allowed_file(filename):
 	return True
 
 # Custom static data
-@app.route('/upload')
-def custom_static():
-	filename = request.args.get("file") or "upload"
-	fullpath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-	fullpath=filename
-	if os.path.isdir(fullpath):
-		all_files = glob("%s/*" % fullpath)
-		all_files_2 = [f.replace("\\","/") for f in all_files]
-		print(all_files)
-		all_filenames = [i.lstrip(fullpath) for i in all_files]
-		print(all_filenames)
-		return render_template("index.html", results=zip(all_filenames,all_files_2))
-	return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+@app.route('/upload', methods=['GET','POST'])
+def upload():
+	filename = request.args.get("file", default="upload")
+	if os.path.isdir(filename):
+		all_files=glob(os.path.join(filename,"*"))
+		name=[os.path.split(i)[1] for i in all_files]
+		return render_template("index.html", results=zip(all_files,name), folder=filename)
+	f = os.path.split(filename)
+	return send_from_directory(f[0], f[1])
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+	folder = request.values.get("folder", default="upload")
 	if request.method == 'POST':
+		print(request.files)
 		# check if the post request has the file part
 		if 'file' not in request.files:
 			flash('No file part')
@@ -42,9 +40,9 @@ def upload_file():
 			return redirect(request.url)
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
-			if not os.path.exists(os.path.join(app.config['UPLOAD_FOLDER'], filename)):
-				file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-				return render_template("index.html", results=glob("./upload/*"))
+			if not os.path.exists(os.path.join(folder, filename)):
+				file.save(os.path.join(folder, filename))
+				return redirect(url_for("upload", file=folder))
 			else:
 				return redirect(url_for('uploaded_file',
 									filename=filename))
@@ -57,9 +55,9 @@ def uploaded_file():
 @app.route("/delete")
 def delete():
 	filetodel = request.args.get("file")
-	os.remove(filetodel)
+	os.remove(os.path.abspath(filetodel))
 	print(filetodel)
-	return redirect("/")
+	return redirect("/?folder=" + urllib.quote(request.args.get("folder")))
 
 
 if not os.path.isdir("./upload/"):

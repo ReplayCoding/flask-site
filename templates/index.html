@@ -2,10 +2,11 @@
     <title>Upload new File</title>
     <h1>Upload new File</h1>
      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <form method=post enctype=multipart/form-data>
+    <form method=post action="/" enctype=multipart/form-data>
       	 <input type=file name=file>
          <input type=submit value=Upload>
-         {% for result,file in results %}
-		 	<br><a href="/upload/?file={{file|urlencode}}">{{result}} </a> | <a href=/delete?file={{result|urlencode}}>Delete</a>			
+         <input type="hidden" name="folder" value="{{folder}}">
+         {% for fullfile,filename in results %}
+		 	<br><a href="/upload?file={{fullfile|urlencode}}">{{filename}} </a> | <a href=/delete?file={{fullfile|urlencode}}&folder={{folder}}>Delete</a>			
          {% endfor %}
     </form>
