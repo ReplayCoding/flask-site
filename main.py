@@ -4,6 +4,22 @@ from glob import glob
 import urllib
 from werkzeug.utils import secure_filename
 
+import ctypes, sys
+
+def is_admin():
+	try:
+		return ctypes.windll.shell32.IsUserAnAdmin()
+	except:
+		return False
+
+if is_admin():
+	# Code of your program here
+	pass
+else:
+	# Re-run the program with admin rights
+	ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+	sys.exit(0)
+
 UPLOAD_FOLDER = 'upload'
 
 app = Flask(__name__)
@@ -55,9 +71,9 @@ def uploaded_file():
 @app.route("/delete")
 def delete():
 	filetodel = request.args.get("file")
-	os.remove(os.path.abspath(filetodel))
+	os.unlink(os.path.join(".",filetodel))
 	print(filetodel)
-	return redirect("/?folder=" + urllib.quote(request.args.get("folder")))
+	return redirect("/upload?file=" + urllib.parse.quote(request.args.get("folder")))
 
 
 if not os.path.isdir("./upload/"):
