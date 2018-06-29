@@ -6,7 +6,15 @@
       	 <input type=file name=file>
          <input type=submit value=Upload>
          <input type="hidden" name="folder" value="{{folder}}">
-         {% for fullfile,filename in results %}
-		 	<br><a href="/upload?file={{fullfile|urlencode}}">{{filename}} </a> | <a href=/delete?file={{fullfile|urlencode}}&folder={{folder}}>Delete</a>			
-         {% endfor %}
+         
     </form>
+    <form method=post action="/folder" enctype=multipart/form-data>
+      	 <input type=text name=foldername>
+         <input type=submit value="Add Folder">
+         <input type="hidden" name="folder" value="{{folder}}">
+    </form>
+        <a href="/">/</a>
+        <a href="/back?folder={{folder}}">..</a>
+     {% for fullfile,filename in results %}
+        <br><a href="/upload?file={{fullfile|urlencode}}">{{filename}} </a> | <a href=/delete?file={{fullfile|urlencode}}&folder={{folder}}>Delete</a>			
+     {% endfor %}

@@ -62,8 +62,27 @@ def delete():
 		shutil.rmtree(path)
 	print(filetodel)
 	return redirect("/upload?file=" + urllib.parse.quote(request.args.get("folder")))
+@app.route("/back")
+def bask_in_my_glory():
+    # DO IT!
+    folder = (request.args.get("folder"))
+    print(folder)
+    x = os.path.split(folder)[0]
+    print(x)
+    if x == "":
+        x = "upload"
+    return redirect("/upload?file="+x)
 
-
+@app.route("/folder", methods=["POST"])
+def folder_add():
+        folder = request.values.get("folder")
+        name = secure_filename(request.values.get("foldername"))
+        print(folder, name)
+        try:
+            os.mkdir(os.path.join(folder, name))
+        except Exception:
+            return redirect("/uploaded_file?filename="+os.path.join(folder, name))
+        return redirect("/upload?file=" + folder)
 if not os.path.isdir("./upload/"):
 	os.mkdir("./upload/")
 app.run(use_reloader=True)
